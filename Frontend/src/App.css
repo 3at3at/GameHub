@@ -1,0 +1,45 @@
+.App {
+  text-align: center;
+}
+
+.min-vh-100 {
+  min-height: 100vh;
+}
+
+.game-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.feature-card {
+  transition: transform 0.2s;
+  height: 100%;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.station-card {
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.station-card:hover {
+  border-color: var(--bs-primary) !important;
+  box-shadow: 0 0 10px rgba(88, 166, 255, 0.3);
+}
+
+.status-badge {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.65rem;
+}
+
+.tournament-card {
+  border-left: 4px solid var(--bs-primary);
+}
+
+.reservation-item {
+  border-left: 3px solid var(--bs-success);
+  padding-left: 1rem;
+}
