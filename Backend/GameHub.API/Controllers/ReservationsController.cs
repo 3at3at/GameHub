@@ -52,6 +52,12 @@ namespace GameHub.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return BadRequest(new { message = string.Join(" ", errors), errors = errors });
+            }
+
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
                 return Unauthorized();

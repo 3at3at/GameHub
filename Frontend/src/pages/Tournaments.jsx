@@ -42,6 +42,68 @@ const Tournaments = () => {
     }
   };
 
+  // Helper function to compare dates (ignoring time)
+  const compareDates = (date1, date2) => {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    d1.setHours(0, 0, 0, 0);
+    d2.setHours(0, 0, 0, 0);
+    return d1 >= d2;
+  };
+
+  // Helper function to check if registration is open
+  const isRegistrationOpen = (tournament) => {
+    const statusStr = String(tournament.status);
+    return statusStr === 'RegistrationOpen' || statusStr === '1';
+  };
+
+  // Helper function to check if button should be disabled
+  const isButtonDisabled = (tournament) => {
+    const hasUser = !!user;
+    const isFull = tournament.currentParticipants >= tournament.maxParticipants;
+    const deadlinePassed = compareDates(new Date(), tournament.registrationDeadline);
+    const statusOpen = isRegistrationOpen(tournament);
+    
+    const disabled = !hasUser || isFull || deadlinePassed || !statusOpen;
+    
+    // Debug logging to help identify issues
+    if (disabled) {
+      console.log(`Button disabled for "${tournament.name}":`, {
+        hasUser,
+        isFull,
+        deadlinePassed,
+        statusOpen,
+        status: tournament.status,
+        statusType: typeof tournament.status,
+        currentParticipants: tournament.currentParticipants,
+        maxParticipants: tournament.maxParticipants,
+        currentDate: new Date().toISOString(),
+        deadline: new Date(tournament.registrationDeadline).toISOString(),
+        deadlineDateOnly: new Date(tournament.registrationDeadline).toLocaleDateString()
+      });
+    }
+    
+    return disabled;
+  };
+
+  // Helper function to get button title
+  const getButtonTitle = (tournament) => {
+    if (!user) return "Please login to register";
+    if (tournament.currentParticipants >= tournament.maxParticipants) return "Tournament is full";
+    if (compareDates(new Date(), tournament.registrationDeadline)) {
+      return `Registration closed on ${new Date(tournament.registrationDeadline).toLocaleDateString()}`;
+    }
+    if (!isRegistrationOpen(tournament)) return "Registration is not open";
+    return "Register for this tournament";
+  };
+
+  // Helper function to get button text
+  const getButtonText = (tournament) => {
+    if (compareDates(new Date(), tournament.registrationDeadline)) return "Registration Closed";
+    if (tournament.currentParticipants >= tournament.maxParticipants) return "Tournament Full";
+    return "Register Now";
+  };
+
   if (loading) {
     return (
       <Container className="py-5 text-center">
@@ -52,11 +114,11 @@ const Tournaments = () => {
 
   return (
     <Container className="py-5">
-      <Row className="mb-5">
+      <Row className="mb-3">
         <Col>
           <div style={{ animation: 'fadeInUp 0.6s ease-out' }}>
             <h1 className="fw-bold mb-2" style={{ fontSize: '2.5rem' }}>Tournaments</h1>
-            <p className="text-secondary" style={{ fontSize: '1.1rem' }}>Join exciting gaming tournaments and compete for prizes!</p>
+            <p className="text-secondary mb-0" style={{ fontSize: '1.1rem' }}>Join exciting gaming tournaments and compete for prizes!</p>
           </div>
         </Col>
       </Row>
@@ -142,6 +204,8 @@ const Tournaments = () => {
                       <br />
                       <strong className="text-white">Start:</strong> <span className="text-white">{new Date(tournament.startDate).toLocaleDateString()}</span>
                       <br />
+                      <strong className="text-white">Registration Deadline:</strong> <span className={new Date(tournament.registrationDeadline) < new Date() ? "text-danger" : "text-white"}>{new Date(tournament.registrationDeadline).toLocaleDateString()}</span>
+                      <br />
                       <strong className="text-white">Entry Fee:</strong> <span className="text-white">${tournament.entryFee}</span> | <strong className="text-white">Prize:</strong> <span className="text-white">${tournament.prizePool}</span>
                       <br />
                       <strong className="text-white">Participants:</strong> <span className="text-white">{tournament.currentParticipants}/{tournament.maxParticipants}</span>
@@ -154,15 +218,12 @@ const Tournaments = () => {
                     <Button
                       variant="primary"
                       onClick={() => handleRegister(tournament.id)}
-                      disabled={
-                        !user ||
-                        tournament.currentParticipants >= tournament.maxParticipants ||
-                        new Date(tournament.registrationDeadline) < new Date()
-                      }
+                      disabled={isButtonDisabled(tournament)}
                       className="w-100 mt-auto"
                       size="sm"
+                      title={getButtonTitle(tournament)}
                     >
-                      Register Now
+                      {getButtonText(tournament)}
                     </Button>
                   </Card.Body>
                 </Card>

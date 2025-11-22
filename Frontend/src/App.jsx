@@ -77,9 +77,9 @@ function App() {
           <footer className="bg-dark text-center py-3 mt-auto">
             <div className="container">
               <p className="mb-0 text-secondary">© 2024 GameHub - Smart Gaming Shop Management</p>
-            </div>
+      </div>
           </footer>
-        </div>
+      </div>
       </Router>
     </AuthProvider>
   );

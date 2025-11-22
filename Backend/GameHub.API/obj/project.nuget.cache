@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "h0Gjy2pvOQc=",
+  "dgSpecHash": "Rw2or3P7dM0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\Backend\\GameHub.API\\GameHub.API.csproj",
+  "projectFilePath": "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\backend\\gamehub.api\\GameHub.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\user\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

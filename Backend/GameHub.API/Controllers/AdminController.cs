@@ -117,6 +117,16 @@ namespace GameHub.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            // Validate dates
+            if (dto.RegistrationDeadline >= dto.StartDate)
+                return BadRequest(new { message = "Registration deadline must be before the tournament start date" });
+
+            if (dto.RegistrationDeadline < DateTime.UtcNow)
+                return BadRequest(new { message = "Registration deadline cannot be in the past" });
+
+            if (dto.StartDate < DateTime.UtcNow)
+                return BadRequest(new { message = "Tournament start date cannot be in the past" });
+
             // Verify shop exists
             var shop = await _context.Shops.FindAsync(dto.ShopId);
             if (shop == null)
@@ -273,9 +283,43 @@ namespace GameHub.API.Controllers
             _context.Shops.Add(shop);
             await _context.SaveChangesAsync();
 
+            // Automatically create default gaming stations for the new shop
+            var stations = new List<GamingStation>();
+            
+            // Add PC stations
+            for (int i = 1; i <= 5; i++)
+            {
+                stations.Add(new GamingStation
+                {
+                    Name = $"PC Station {i}",
+                    Type = StationType.PC,
+                    Status = StationStatus.Available,
+                    ShopId = shop.Id,
+                    Specifications = "RTX 4070, Intel i7-13700K, 32GB RAM, 144Hz Monitor",
+                    HourlyRate = shop.HourlyRate
+                });
+            }
+
+            // Add PlayStation stations
+            for (int i = 1; i <= 3; i++)
+            {
+                stations.Add(new GamingStation
+                {
+                    Name = $"PlayStation 5 Station {i}",
+                    Type = StationType.PlayStation,
+                    Status = StationStatus.Available,
+                    ShopId = shop.Id,
+                    Specifications = "PlayStation 5, 4K TV, DualSense Controller",
+                    HourlyRate = shop.HourlyRate + 1.00m
+                });
+            }
+
+            _context.GamingStations.AddRange(stations);
+            await _context.SaveChangesAsync();
+
             return Ok(new
             {
-                message = "Shop created successfully",
+                message = "Shop created successfully with gaming stations",
                 shop = new
                 {
                     shop.Id,
@@ -288,7 +332,66 @@ namespace GameHub.API.Controllers
                     shop.HourlyRate,
                     shop.IsActive,
                     shop.CreatedAt
-                }
+                },
+                stationsCreated = stations.Count
+            });
+        }
+
+        [HttpPost("shops/{shopId}/stations")]
+        public async Task<IActionResult> AddStationsToShop(int shopId)
+        {
+            var shop = await _context.Shops.FindAsync(shopId);
+            if (shop == null)
+                return NotFound(new { message = "Shop not found" });
+
+            // Check if shop already has stations
+            var existingStationsCount = await _context.GamingStations
+                .Where(gs => gs.ShopId == shopId)
+                .CountAsync();
+
+            if (existingStationsCount > 0)
+            {
+                return BadRequest(new { message = "Shop already has gaming stations" });
+            }
+
+            // Create default gaming stations for the shop
+            var stations = new List<GamingStation>();
+            
+            // Add PC stations
+            for (int i = 1; i <= 5; i++)
+            {
+                stations.Add(new GamingStation
+                {
+                    Name = $"PC Station {i}",
+                    Type = StationType.PC,
+                    Status = StationStatus.Available,
+                    ShopId = shop.Id,
+                    Specifications = "RTX 4070, Intel i7-13700K, 32GB RAM, 144Hz Monitor",
+                    HourlyRate = shop.HourlyRate
+                });
+            }
+
+            // Add PlayStation stations
+            for (int i = 1; i <= 3; i++)
+            {
+                stations.Add(new GamingStation
+                {
+                    Name = $"PlayStation 5 Station {i}",
+                    Type = StationType.PlayStation,
+                    Status = StationStatus.Available,
+                    ShopId = shop.Id,
+                    Specifications = "PlayStation 5, 4K TV, DualSense Controller",
+                    HourlyRate = shop.HourlyRate + 1.00m
+                });
+            }
+
+            _context.GamingStations.AddRange(stations);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = $"Successfully added {stations.Count} gaming stations to shop",
+                stationsCreated = stations.Count
             });
         }
     }

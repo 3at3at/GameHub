@@ -23,7 +23,7 @@
 .station-card {
   cursor: pointer;
   transition: all 0.3s;
-}
+  }
 
 .station-card:hover {
   border-color: var(--bs-primary) !important;

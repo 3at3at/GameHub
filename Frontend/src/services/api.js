@@ -23,6 +23,23 @@ api.interceptors.request.use(
   }
 );
 
+// Handle 401 errors (unauthorized) - token expired or invalid
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expired or invalid - clear auth data
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Redirect to login if not already there
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const authService = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
@@ -63,6 +80,7 @@ export const adminService = {
   deleteTournament: (id) => api.delete(`/admin/tournaments/${id}`),
   getShops: () => api.get('/admin/shops'),
   createShop: (data) => api.post('/admin/shops', data),
+  addStationsToShop: (shopId) => api.post(`/admin/shops/${shopId}/stations`),
 };
 
 export default api;

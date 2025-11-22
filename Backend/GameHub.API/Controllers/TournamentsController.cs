@@ -21,17 +21,15 @@ namespace GameHub.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTournaments([FromQuery] int? shopId, [FromQuery] TournamentStatus? status)
+        public async Task<IActionResult> GetTournaments([FromQuery] string? status = null)
         {
-            var query = _context.Tournaments
-                .Include(t => t.Shop)
-                .AsQueryable();
+            var query = _context.Tournaments.Include(t => t.Shop).AsQueryable();
 
-            if (shopId.HasValue)
-                query = query.Where(t => t.ShopId == shopId.Value);
-
-            if (status.HasValue)
-                query = query.Where(t => t.Status == status.Value);
+            // Filter by status if provided (case-insensitive)
+            if (!string.IsNullOrEmpty(status) && Enum.TryParse<TournamentStatus>(status, true, out var statusEnum))
+            {
+                query = query.Where(t => t.Status == statusEnum);
+            }
 
             var tournaments = await query
                 .Select(t => new
@@ -47,6 +45,7 @@ namespace GameHub.API.Controllers
                     t.EntryFee,
                     t.PrizePool,
                     t.Status,
+                    t.ImageUrl,
                     ShopName = t.Shop!.Name
                 })
                 .OrderBy(t => t.StartDate)
@@ -88,45 +87,52 @@ namespace GameHub.API.Controllers
         [Authorize]
         public async Task<IActionResult> RegisterForTournament(int id)
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-                return Unauthorized();
-
-            var tournament = await _context.Tournaments
-                .FirstOrDefaultAsync(t => t.Id == id);
-
-            if (tournament == null)
-                return NotFound();
-
-            if (tournament.Status != TournamentStatus.RegistrationOpen)
-                return BadRequest(new { message = "Registration is not open for this tournament" });
-
-            if (tournament.CurrentParticipants >= tournament.MaxParticipants)
-                return BadRequest(new { message = "Tournament is full" });
-
-            if (DateTime.UtcNow > tournament.RegistrationDeadline)
-                return BadRequest(new { message = "Registration deadline has passed" });
-
-            var existingRegistration = await _context.TournamentRegistrations
-                .AnyAsync(tr => tr.TournamentId == id && tr.UserId == userId && tr.Status != RegistrationStatus.Cancelled);
-
-            if (existingRegistration)
-                return BadRequest(new { message = "You are already registered for this tournament" });
-
-            var registration = new TournamentRegistration
+            try
             {
-                TournamentId = id,
-                UserId = userId,
-                Status = RegistrationStatus.Confirmed,
-                PaymentAmount = tournament.EntryFee
-            };
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (userId == null)
+                    return Unauthorized(new { message = "User not authenticated" });
 
-            tournament.CurrentParticipants++;
+                var tournament = await _context.Tournaments
+                    .FirstOrDefaultAsync(t => t.Id == id);
 
-            _context.TournamentRegistrations.Add(registration);
-            await _context.SaveChangesAsync();
+                if (tournament == null)
+                    return NotFound(new { message = "Tournament not found" });
 
-            return Ok(new { message = "Successfully registered for tournament" });
+                if (tournament.Status != TournamentStatus.RegistrationOpen)
+                    return BadRequest(new { message = "Registration is not open for this tournament" });
+
+                if (tournament.CurrentParticipants >= tournament.MaxParticipants)
+                    return BadRequest(new { message = "Tournament is full" });
+
+                if (DateTime.UtcNow > tournament.RegistrationDeadline)
+                    return BadRequest(new { message = "Registration deadline has passed" });
+
+                var existingRegistration = await _context.TournamentRegistrations
+                    .AnyAsync(tr => tr.TournamentId == id && tr.UserId == userId && tr.Status != RegistrationStatus.Cancelled);
+
+                if (existingRegistration)
+                    return BadRequest(new { message = "You are already registered for this tournament" });
+
+                var registration = new TournamentRegistration
+                {
+                    TournamentId = id,
+                    UserId = userId,
+                    Status = RegistrationStatus.Confirmed,
+                    PaymentAmount = tournament.EntryFee
+                };
+
+                tournament.CurrentParticipants++;
+
+                _context.TournamentRegistrations.Add(registration);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Successfully registered for tournament" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while registering for the tournament", error = ex.Message });
+            }
         }
 
         [HttpGet("my-registrations")]

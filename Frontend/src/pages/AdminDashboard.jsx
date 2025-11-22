@@ -202,6 +202,18 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleAddStationsToShop = async (shopId) => {
+    try {
+      setError('');
+      setSuccess('');
+      await adminService.addStationsToShop(shopId);
+      setSuccess('Gaming stations added successfully!');
+      fetchData();
+    } catch (error) {
+      setError('Failed to add stations: ' + (error.response?.data?.message || error.message));
+    }
+  };
+
   if (!isAdmin()) {
     return null;
   }
@@ -293,6 +305,14 @@ const AdminDashboard = () => {
                             {shop.isActive ? 'Active' : 'Inactive'}
                           </Badge>
                         </Card.Text>
+                        <Button
+                          variant="outline-primary"
+                          size="sm"
+                          onClick={() => handleAddStationsToShop(shop.id)}
+                          className="w-100 mt-2"
+                        >
+                          ➕ Add Gaming Stations
+                        </Button>
                       </Card.Body>
                     </Card>
                   </Col>

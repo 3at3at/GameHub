@@ -13,6 +13,9 @@ namespace GameHub.API.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
+         //UserManager → manage users
+        //SignInManager → validate passwords
+        //IConfiguration → read settings
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
@@ -31,7 +34,7 @@ namespace GameHub.API.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(ModelState);// ModelState automatically validates incoming data based on your DTO attributes and collects any errors, so you can return them to the client.
 
             var user = new User
             {

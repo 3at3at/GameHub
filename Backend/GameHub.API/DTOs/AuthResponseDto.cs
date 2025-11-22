@@ -1,6 +1,6 @@
 namespace GameHub.API.DTOs
 {
-    public class AuthResponseDto
+    public class AuthResponseDto // returns token + user info after login
     {
         public string Token { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

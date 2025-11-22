@@ -8,7 +8,7 @@ namespace GameHub.API.Controllers
     [Route("api/[controller]")]
     public class ShopsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;//bridge to db
 
         public ShopsController(ApplicationDbContext context)
         {
@@ -16,19 +16,10 @@ namespace GameHub.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetShops([FromQuery] string? city, [FromQuery] string? country)
+        public async Task<IActionResult> GetShops()
         {
-            var query = _context.Shops
+            var shops = await _context.Shops
                 .Where(s => s.IsActive)
-                .AsQueryable();
-
-            if (!string.IsNullOrEmpty(city))
-                query = query.Where(s => s.City == city);
-
-            if (!string.IsNullOrEmpty(country))
-                query = query.Where(s => s.Country == country);
-
-            var shops = await query
                 .Select(s => new
                 {
                     s.Id,
@@ -40,7 +31,7 @@ namespace GameHub.API.Controllers
                     s.Email,
                     s.HourlyRate
                 })
-                .ToListAsync();
+                .ToListAsync();//sends sql to db and returns list
 
             return Ok(shops);
         }

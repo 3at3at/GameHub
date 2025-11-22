@@ -1,11 +1,19 @@
 {
   "Version": 1,
-  "Hash": "7I+UMQUXQP6kpFdxLQJWwVF65QmY7GK7e1Carlp7zOY=",
+  "Hash": "7AIFKffQJeTYtpeIep8uBZeq6oFWwiSG0xYwaNcq5uE=",
   "Source": "GameHub.API",
   "BasePath": "_content/GameHub.API",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "GameHub.API\\wwwroot",
+      "Source": "GameHub.API",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\backend\\gamehub.api\\wwwroot\\",
+      "BasePath": "_content/GameHub.API",
+      "Pattern": "**"
+    }
+  ],
   "Assets": []
 }

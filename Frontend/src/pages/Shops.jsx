@@ -51,10 +51,10 @@ const Shops = () => {
         ) : (
           shops.map((shop, index) => (
             <Col md={6} lg={4} key={shop.id} className="mb-4">
-              <Card className="bg-dark border-secondary h-100 animate-card" style={{ animationDelay: `${index * 0.1}s` }}>
-                <Card.Body className="p-4">
+              <Card className="bg-dark border-secondary h-100 animate-card d-flex flex-column" style={{ animationDelay: `${index * 0.1}s` }}>
+                <Card.Body className="p-4 d-flex flex-column">
                   <Card.Title className="text-primary mb-3" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{shop.name}</Card.Title>
-                  <Card.Text className="text-secondary mb-3">
+                  <Card.Text className="text-secondary mb-3 flex-grow-1">
                     <div className="mb-2">
                       <strong className="text-white">📍</strong> <span className="ms-2">{shop.address}, {shop.city}, {shop.country}</span>
                     </div>
@@ -69,7 +69,7 @@ const Shops = () => {
                     as={Link} 
                     to={`/shops/${shop.id}`} 
                     variant="primary" 
-                    className="w-100"
+                    className="w-100 mt-auto"
                     style={{
                       borderRadius: '6px',
                       padding: '0.75rem',

@@ -16,12 +16,29 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    if (token && userData) {
-      setUser(JSON.parse(userData));
-    }
-    setLoading(false);
+    const initializeAuth = () => {
+      try {
+        const token = localStorage.getItem('token');
+        const userData = localStorage.getItem('user');
+        if (token && userData) {
+          try {
+            const parsedUser = JSON.parse(userData);
+            setUser(parsedUser);
+          } catch (parseError) {
+            console.error('Error parsing user data from localStorage:', parseError);
+            // Clear corrupted data
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+          }
+        }
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
   const login = async (email, password) => {

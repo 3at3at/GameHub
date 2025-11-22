@@ -137,3 +137,5 @@ C:\Users\user\Desktop\GameHub Full Stack Project\Backend\GameHub.API\obj\Debug\n
 C:\Users\user\Desktop\GameHub Full Stack Project\Backend\GameHub.API\obj\Debug\net8.0\GameHub.API.pdb
 C:\Users\user\Desktop\GameHub Full Stack Project\Backend\GameHub.API\obj\Debug\net8.0\GameHub.API.genruntimeconfig.cache
 C:\Users\user\Desktop\GameHub Full Stack Project\Backend\GameHub.API\obj\Debug\net8.0\ref\GameHub.API.dll
+C:\Users\user\Desktop\GameHub Full Stack Project\Backend\GameHub.API\bin\Debug\net8.0\GameHub.API.staticwebassets.runtime.json
+C:\Users\user\Desktop\GameHub Full Stack Project\Backend\GameHub.API\obj\Debug\net8.0\GameHub.API.sourcelink.json

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\Backend\\GameHub.API\\GameHub.API.csproj": {}
+    "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\backend\\gamehub.api\\GameHub.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\Backend\\GameHub.API\\GameHub.API.csproj": {
+    "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\backend\\gamehub.api\\GameHub.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\Backend\\GameHub.API\\GameHub.API.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\backend\\gamehub.api\\GameHub.API.csproj",
         "projectName": "GameHub.API",
-        "projectPath": "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\Backend\\GameHub.API\\GameHub.API.csproj",
+        "projectPath": "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\backend\\gamehub.api\\GameHub.API.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\Backend\\GameHub.API\\obj\\",
+        "outputPath": "C:\\Users\\user\\Desktop\\GameHub Full Stack Project\\backend\\gamehub.api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -115,9 +115,10 @@ const Reservations = () => {
 
     try {
       const response = await reservationsService.create({
-        ...formData,
+        gamingStationId: parseInt(formData.gamingStationId),
         startTime: new Date(formData.startTime).toISOString(),
         endTime: new Date(formData.endTime).toISOString(),
+        notes: formData.notes || null,
       });
       
       let successMessage = 'Reservation created successfully!';
